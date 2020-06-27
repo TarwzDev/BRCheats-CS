@@ -15,6 +15,7 @@
 #include "VirtualMethod.h"
 #include "WeaponData.h"
 #include "WeaponId.h"
+#include "UserCmd.h"
 
 #include "../Config.h"
 #include "../Interfaces.h"
@@ -46,8 +47,8 @@ public:
     VIRTUAL_METHOD(int, index, 10, (), (this + 8))
     VIRTUAL_METHOD(void, setDestroyedOnRecreateEntities, 13, (), (this + 8))
 
-    VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
     VIRTUAL_METHOD(const matrix3x4&, toWorldTransform, 32, (), (this + 4))
+    VIRTUAL_METHOD(const Model*, getModel, 8, (), (this + 4))
 
     VIRTUAL_METHOD(int&, handle, 2, (), (this))
     VIRTUAL_METHOD(Collideable*, getCollideable, 3, (), (this))
@@ -63,6 +64,8 @@ public:
     VIRTUAL_METHOD(WeaponType, getWeaponType, 454, (), (this))
     VIRTUAL_METHOD(WeaponInfo*, getWeaponData, 460, (), (this))
     VIRTUAL_METHOD(float, getInaccuracy, 482, (), (this))
+
+    
 
     constexpr auto isPistol() noexcept
     {
@@ -122,8 +125,10 @@ public:
         interfaces->engineTrace->traceRay({ localPlayer->getEyePosition(), position ? position : getBonePosition(8) }, 0x46004009, { localPlayer.get() }, trace);
         return trace.entity == this || trace.fraction > 0.97f;
     }
-    
+
+  
     bool isOtherEnemy(Entity* other) noexcept;
+
 
     VarMap* getVarMap() noexcept
     {
@@ -170,6 +175,22 @@ public:
         return -1;
     }
 
+    bool throwing(UserCmd* cmd)
+    {
+        auto weapon = localPlayer->getActiveWeapon();
+        auto weaponClass = getWeaponClass(weapon->itemDefinitionIndex2());
+        if (weaponClass == 40) {
+            if (!weapon->pinPulled())
+                if (weapon->throwTime() > 0.f)
+                    return true;
+
+            if ((cmd->buttons & (UserCmd::IN_ATTACK | UserCmd::IN_ATTACK2)))
+                if (weapon->throwTime() > 0.f)
+                    return true;
+        }
+        return false;
+    }
+
     [[nodiscard]] auto getPlayerName(bool normalize) noexcept
     {
         std::string playerName = "unknown";
@@ -207,7 +228,7 @@ public:
     PNETVAR(wearables, "CBaseCombatCharacter", "m_hMyWearables", int)
 
     NETVAR(viewModel, "CBasePlayer", "m_hViewModel[0]", int)
-    // NETVAR(health, "CBasePlayer", "m_iHealth", int)
+    //NETVAR(health, "CBasePlayer", "m_iHealth", int)
     NETVAR(fov, "CBasePlayer", "m_iFOV", int)
     NETVAR(fovStart, "CBasePlayer", "m_iFOVStart", int)
     NETVAR(flags, "CBasePlayer", "m_fFlags", int)
@@ -262,6 +283,9 @@ public:
     NETVAR(c4Ticking, "CPlantedC4", "m_bBombTicking", bool)
     NETVAR(c4DefuseCountDown, "CPlantedC4", "m_flDefuseCountDown", float)
     NETVAR(c4Defuser, "CPlantedC4", "m_hBombDefuser", int)
+
+    NETVAR(pinPulled, "CBaseCSGrenade", "m_bPinPulled", bool);
+    NETVAR(throwTime, "CBaseCSGrenade", "m_fThrowTime", float);
 
     NETVAR(tabletReceptionIsBlocked, "CTablet", "m_bTabletReceptionIsBlocked", bool)
     

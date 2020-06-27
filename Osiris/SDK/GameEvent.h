@@ -29,6 +29,7 @@ public:
     UtlVector<void*> listeners;
 };
 
+
 class GameEventManager {
 public:
     VIRTUAL_METHOD(bool, addListener, 3, (GameEventListener* listener, const char* name), (this, listener, name, false))
