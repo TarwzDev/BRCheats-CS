@@ -3137,6 +3137,25 @@ void GUI::renderPopupMenu(bool contentOnly) noexcept
             window.config = !window.config;
         }
         ImGui::PopItemWidth();
+
+        bool open = true;
+        if (ImGui::BeginPopupModal("Aviso", &open, windowFlags))
+        {
+            auto menuKey = interfaces->inputSystem->virtualKeyToString(config->misc.menuKey);
+            ImGui::Text("Para abrir o menu novamente, pressione INSERT");
+
+            if (ImGui::Button("Fechar")) {
+                config->style.closeMsg = true;
+                gui->open = !gui->open;
+                if (!gui->open) {
+                    // ImGui::GetIO().MouseDown[0] = false;
+                    interfaces->inputSystem->resetInputState();
+                    ImGui::CloseCurrentPopup();
+                    ImGui::EndPopup();
+                }
+            }
+
+        }
 }
 
 void GUI::renderGuiStyle2() noexcept
@@ -3199,24 +3218,7 @@ void GUI::renderGuiStyle2() noexcept
         ImGui::EndTabBar();
     }
 
-    bool open = true;
-    if (ImGui::BeginPopupModal("Aviso", &open, windowFlags))
-    {
-        auto menuKey = interfaces->inputSystem->virtualKeyToString(config->misc.menuKey);
-        ImGui::Text("Para abrir o menu novamente, pressione INSERT");
 
-        if (ImGui::Button("Fechar")) {
-            config->style.closeMsg = true;
-            gui->open = !gui->open;
-            if (!gui->open) {
-                // ImGui::GetIO().MouseDown[0] = false;
-                interfaces->inputSystem->resetInputState();
-                ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
-            }
-        }
-
-    }
 
     ImGui::End();
 }
