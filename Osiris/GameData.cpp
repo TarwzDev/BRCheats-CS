@@ -393,8 +393,8 @@ WeaponData::WeaponData(Entity* entity) noexcept : BaseData{ entity }
             case WeaponId::M249: return "M249";
             case WeaponId::Negev: return "Negev";
 
-            case WeaponId::Flashbang: return "Flashbang";
-            case WeaponId::HeGrenade: return "HE Grenade";
+            case WeaponId::Flash: return "Flashbang";
+            case WeaponId::HEGrenade: return "HE Grenade";
             case WeaponId::SmokeGrenade: return "Smoke Grenade";
             case WeaponId::Molotov: return "Molotov";
             case WeaponId::Decoy: return "Decoy Grenade";

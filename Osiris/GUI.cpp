@@ -3118,6 +3118,9 @@ void GUI::renderPopupMenu(bool contentOnly) noexcept
         if (ImGui::Button("Chams", { 80.0f, 20.0f })) {
             window.chams = !window.chams;
         }
+       /* if (ImGui::Button("AntiOBS", { 80.0f, 20.0f })) {
+            window.streamProofESP = !window.streamProofESP;
+        } */
         if (ImGui::Button("Visuais", { 80.0f, 20.0f })) {
             window.visuals = !window.visuals;
         }

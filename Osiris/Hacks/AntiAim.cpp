@@ -1,3 +1,5 @@
+/*
+
 #include "AntiAim.h"
 #include "../Interfaces.h"
 #include "../SDK/Engine.h"
@@ -13,40 +15,6 @@ float AntiAim::RandomFloat(float min, float max) noexcept
     return (min + 1) + (((float)rand()) / (float)RAND_MAX) * (max - (min + 1));
 };
 
-bool AntiAim::LbyUpdate()
-{
-    constexpr auto timeToTicks = [](float time) {  return static_cast<int>(0.5f + time / config->globals.tickRate); };
-
-    if (!config->antiAim.general.fakeWalk.keyToggled)
-    {
-        if (!(localPlayer->flags() & 1))
-        {
-            return false;
-        }
-        if (localPlayer->velocity() > 0.f)
-        {
-            config->globals.nextLBY = 0.22f;
-            return false;
-        }
-        if (config->globals.serverTime - config->globals.lastLBY - config->globals.nextLBY >= 0)
-        {
-            config->globals.nextLBY = 1.125f;
-            config->globals.lastLBY = config->globals.serverTime;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else if (config->antiAim.general.fakeWalk.keyToggled)
-    {
-        if (interfaces->engine->getNetworkChannel()->chokedPackets == config->antiAim.general.fakeWalk.maxChoke)
-            return true;
-        else
-            return false;
-    }
-}
 
 void AntiAim::run(UserCmd* cmd, const Vector& previousViewAngles, const Vector& currentViewAngles, bool& sendPacket) noexcept
 {
@@ -387,3 +355,5 @@ void AntiAim::fakeWalk(UserCmd* cmd, bool& sendPacket) noexcept
         }
     }
 }
+
+*/

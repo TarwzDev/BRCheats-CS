@@ -131,6 +131,7 @@ static bool canScan(Entity* entity, const Vector& destination, const WeaponInfo*
     return false;
 }
 
+/*
 void Aimbot::autoZeus(UserCmd* cmd) noexcept
 {
     if (!localPlayer || !localPlayer->isAlive() || localPlayer->nextAttack() > memory->globalVars->serverTime())
@@ -241,7 +242,7 @@ void Aimbot::autoZeus(UserCmd* cmd) noexcept
 
         lastCommand = cmd->commandNumber;
     }
-}
+}*/
 
 void Aimbot::run(UserCmd* cmd) noexcept
 {
@@ -261,8 +262,8 @@ void Aimbot::run(UserCmd* cmd) noexcept
     if (weaponClass == 40)
         return;
 
-    if (activeWeapon->itemDefinitionIndex2() == WeaponId::Taser && config->misc.autoZeus)
-        Aimbot::autoZeus(cmd);
+    //if (activeWeapon->itemDefinitionIndex2() == WeaponId::Taser && config->misc.autoZeus)
+      //  Aimbot::autoZeus(cmd);
 
     if (!config->aimbot[weaponIndex].enabled)
         weaponIndex = weaponClass;
@@ -340,7 +341,7 @@ void Aimbot::run(UserCmd* cmd) noexcept
             }
         }
 
-        if (bestTarget.notNull() && (config->aimbot[weaponIndex].ignoreSmoke || !memory->lineGoesThroughSmoke(localPlayer->getEyePosition(), bestTarget.notNull(), 1))) {
+        if (bestTarget.notNull() && (config->aimbot[weaponIndex].ignoreSmoke || !memory->lineGoesThroughSmoke(localPlayer->getEyePosition(), bestTarget, 1))) {
             static Vector lastAngles{ cmd->viewangles };
             static int lastCommand{ };
 

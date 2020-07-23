@@ -22,11 +22,6 @@ struct StudioHitboxSet {
     int numHitboxes;
     int hitboxIndex;
 
-    const StudioBone* getBone(int i) const noexcept
-    {
-        return i >= 0 && i < numBones ? reinterpret_cast<StudioBone*>(std::uintptr_t(this) + boneIndex) + i : nullptr;
-    }
-
     const char* getName() noexcept
     {
         return nameIndex ? reinterpret_cast<const char*>(std::uintptr_t(this) + nameIndex) : nullptr;
@@ -45,10 +40,10 @@ struct StudioBone {
     int nameIndex;
     int	parent;
     PAD(152)
-    int flags;
+        int flags;
     PAD(52)
 
-    const char* getName() const noexcept
+        const char* getName() const noexcept
     {
         return nameIndex ? reinterpret_cast<const char*>(std::uintptr_t(this) + nameIndex) : nullptr;
     }
@@ -74,6 +69,11 @@ struct StudioHdr {
     int numHitboxSets;
     int hitboxSetIndex;
 
+    const StudioBone* getBone(int i) const noexcept
+    {
+        return i >= 0 && i < numBones ? reinterpret_cast<StudioBone*>(std::uintptr_t(this) + boneIndex) + i : nullptr;
+    }
+
     StudioHitboxSet* getHitboxSet(int i) noexcept
     {
         return i >= 0 && i < numHitboxSets ? reinterpret_cast<StudioHitboxSet*>(std::uintptr_t(this) + hitboxSetIndex) + i : nullptr;
@@ -85,5 +85,5 @@ struct Model;
 class ModelInfo {
 public:
     VIRTUAL_METHOD(int, getModelIndex, 2, (const char* name), (this, name))
-    VIRTUAL_METHOD(StudioHdr*, getStudioModel, 32, (const Model* model), (this, model))
+        VIRTUAL_METHOD(StudioHdr*, getStudioModel, 32, (const Model* model), (this, model))
 };

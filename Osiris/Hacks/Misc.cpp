@@ -23,6 +23,11 @@
 #include "../SDK/WeaponSystem.h"
 #include "../SDK/WeaponData.h"
 #include "../GUI.h"
+#include "../Helpers.h"
+
+
+#include "../imgui/imgui.h"
+#include "../imgui/imgui_internal.h"
 
 
 
@@ -78,33 +83,40 @@ void Misc::inverseRagdollGravity() noexcept
 
 void Misc::updateClanTag(bool tagChanged) noexcept
 {
+    static std::string clanTag;
 
-    if (config->misc.clocktag) {
-        const auto time = std::time(nullptr);
-        const auto localTime = std::localtime(&time);
-        const auto timeString = '[' + std::to_string(localTime->tm_hour) + ':' + std::to_string(localTime->tm_min) + ':' + std::to_string(localTime->tm_sec) + ']';
-        memory->setClanTag(timeString.c_str(), timeString.c_str());
+    if (tagChanged) {
+        clanTag = config->misc.clanTag;
+        if (!clanTag.empty() && clanTag.front() != ' ' && clanTag.back() != ' ')
+            clanTag.push_back(' ');
+        return;
     }
 
-    if (config->misc.customClanTag) {
-        static std::string clanTag;
+    static auto lastTime = 0.0f;
 
-        if (tagChanged) {
-            clanTag = config->misc.clanTag;
-            if (!isblank(clanTag.front()) && !isblank(clanTag.back()))
-                clanTag.push_back(' ');
-        }
+    if (config->misc.clocktag) {
+        if (memory->globalVars->realtime - lastTime < 1.0f)
+            return;
 
-        static auto lastTime{ 0.0f };
+        const auto time = std::time(nullptr);
+        const auto localTime = std::localtime(&time);
+        char s[11];
+        s[0] = '\0';
+        sprintf_s(s, "[%02d:%02d:%02d]", localTime->tm_hour, localTime->tm_min, localTime->tm_sec);
+        lastTime = memory->globalVars->realtime;
+        memory->setClanTag(s, s);
+    }
+    else if (config->misc.customClanTag) {
         if (memory->globalVars->realtime - lastTime < 0.6f)
             return;
+
+        if (config->misc.animatedClanTag && !clanTag.empty()) {
+            const auto offset = Helpers::utf8SeqLen(clanTag[0]);
+            if (offset != -1)
+                std::rotate(clanTag.begin(), clanTag.begin() + offset, clanTag.end());
+        }
         lastTime = memory->globalVars->realtime;
-
-        if (config->misc.animatedClanTag && !clanTag.empty())
-            std::rotate(std::begin(clanTag), std::next(std::begin(clanTag)), std::end(clanTag));
-
         memory->setClanTag(clanTag.c_str(), clanTag.c_str());
-
     }
 }
 
@@ -174,7 +186,7 @@ void Misc::watermark() noexcept
         static auto frameRate = 1.0f;
         frameRate = 0.9f * frameRate + 0.1f * memory->globalVars->absoluteFrameTime;
         const auto [screenWidth, screenHeight] = interfaces->surface->getScreenSize();
-        std::wstring fps{ L"FPS: " + std::to_wstring(static_cast<int>(1 / frameRate)) };
+        std::wstring fps{ std::to_wstring(static_cast<int>(1 / frameRate)) + L" fps" };
         const auto [fpsWidth, fpsHeight] = interfaces->surface->getTextSize(Surface::font, fps.c_str());
         interfaces->surface->setTextPosition(screenWidth - fpsWidth - 5, 0);
         interfaces->surface->printText(fps.c_str());
@@ -183,7 +195,7 @@ void Misc::watermark() noexcept
         if (auto networkChannel = interfaces->engine->getNetworkChannel(); networkChannel && networkChannel->getLatency(0) > 0.0f)
             latency = networkChannel->getLatency(0);
 
-        std::wstring ping{ L"PING: " + std::to_wstring(static_cast<int>(latency * 1000)) + L" ms" };
+        std::wstring ping{ std::to_wstring(static_cast<int>(latency * 1000)) + L" ms" };
         const auto pingWidth = interfaces->surface->getTextSize(Surface::font, ping.c_str()).first;
         interfaces->surface->setTextPosition(screenWidth - pingWidth - 5, fpsHeight);
         interfaces->surface->printText(ping.c_str());

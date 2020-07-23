@@ -1,5 +1,5 @@
 #pragma once
-
+/*
 struct UserCmd;
 struct Vector;
 
@@ -8,4 +8,4 @@ namespace AntiAim {
 	bool LbyUpdate();
 	void run(UserCmd*, const Vector&, const Vector&, bool&) noexcept;
 	void fakeWalk(UserCmd* cmd, bool& sendPacket) noexcept;
-}
+}*/

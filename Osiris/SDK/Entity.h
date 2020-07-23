@@ -282,15 +282,6 @@ public:
         CreateAnimState(state, this);
     }
 
-    void UpdateState(AnimState* state, Vector angle) {
-        if (!state || !angle)
-            return;
-        static auto UpdateAnimState = reinterpret_cast<void(__vectorcall*)(void*, void*, float, float, float, void*)>(memory->UpdateState);
-        if (!UpdateAnimState)
-            return;
-        UpdateAnimState(state, nullptr, 0.0f, angle.y, angle.x, nullptr);
-    }
-
     float spawnTime()
     {
         return *(float*)((uintptr_t)this + 0xA370);

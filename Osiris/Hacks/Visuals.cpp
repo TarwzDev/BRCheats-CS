@@ -512,13 +512,7 @@ void Visuals::indicators() noexcept
 
             if (config->visuals.selectedIndicators[1])
             {
-                interfaces->surface->setTextFont(18); // LBY indicator
-                interfaces->surface->setTextPosition(bottomLeft[0], bottomLeft[1] - (screenSizeMultiplier[1] * 75) - LBYHeight);
-                if (lby != config->globals.realAngle)
-                    interfaces->surface->setTextColor(0, 255, 0, 255);
-                else
-                    interfaces->surface->setTextColor(255, 0, 0, 255);
-                interfaces->surface->printText(LBYIndicator);
+
             }
 
             if (config->visuals.selectedIndicators[2])

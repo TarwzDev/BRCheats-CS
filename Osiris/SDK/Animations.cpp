@@ -66,7 +66,6 @@ void Animations::fake() noexcept
 
         *(uint32_t*)((uintptr_t)localPlayer.get() + 0xA68) = 0;
 
-        localPlayer.get()->UpdateState(fakeanimstate, data.viewangles);
         localPlayer.get()->InvalidateBoneCache();
         memory->setAbsAngle(localPlayer.get(), Vector{ 0, fakeanimstate->GoalFeetYaw, 0 });
         std::memcpy(localPlayer.get()->animOverlays(), &networked_layers, sizeof(AnimationLayer) * localPlayer->getAnimationLayerCount());
@@ -116,7 +115,6 @@ void Animations::real() noexcept
         old_tick = memory->globalVars->tickCount;
         std::memcpy(&networked_layers, localPlayer.get()->animOverlays(), sizeof(AnimationLayer) * localPlayer->getAnimationLayerCount());
         localPlayer.get()->ClientSideAnimation() = true;
-        localPlayer.get()->UpdateState(localPlayer->getAnimstate(), data.viewangles);
         localPlayer.get()->UpdateClientSideAnimation();
         localPlayer.get()->ClientSideAnimation() = false;
         if (data.sendPacket)
